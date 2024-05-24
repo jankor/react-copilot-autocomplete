@@ -1,0 +1,41 @@
+{
+  "name": "react-copilot-autocomplete",
+  "version": "0.0.1",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/react-copilot-autocomplete.umd.cjs",
+  "module": "./dist/react-copilot-autocomplete.js",
+  "exports": {
+    ".": {
+      "import": "./dist/react-copilot-autocomplete.js",
+      "require": "./dist/react-copilot-autocomplete.umd.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "tsc": "tsc",
+    "build": "vite build -m 'production'",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "trie-typed": "^1.51.9"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "eslint": "^8.53.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.9.1"
+  }
+}
