@@ -4,6 +4,7 @@ This is a copilot like autosuggest in react based on textarea (not on content ed
 Use Tab or click/tap the textarea to autocomplete current suggestion.
 
 You can pass a dictionary list and word autocomplete will work out of the box based on Trie index look up:
+
 [![react-copilot-autocomplete](https://github.com/jankor/react-copilot-autocomplete/raw/main/src/assets/word-autocomplete.gif)](https://github.com/jankor/react-copilot-autocomplete)
 ```js
 <AutocompleteTextarea words={['New York', 'London', 'Berlin', 'Hong Kong']}/>
