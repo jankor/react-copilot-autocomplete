@@ -5,6 +5,8 @@ All props are passed directly to the textarea (including ref) so this component 
 form handling.
 Use Tab or click/tap the textarea to autocomplete the current suggestion.
 
+Live preview available at [https://jankor.github.io/react-copilot-autocomplete/](https://jankor.github.io/react-copilot-autocomplete/)
+
 You can pass a dictionary list and word autocompletion will work out of the box based on Trie index lookup:
 
 [![react-copilot-autocomplete](https://github.com/jankor/react-copilot-autocomplete/raw/main/src/assets/word-autocomplete.gif)](https://github.com/jankor/react-copilot-autocomplete)
@@ -34,7 +36,7 @@ You can also pass your own suggestion function and ignore the built-in word comp
 ```
 
 # Configurable Props
-*Note*: All props are optional but if you don't pass either dictionary or handleCompletion there will be no completion.
+*Note*: All props are optional but if you don't pass either dictionary or handleCompletion there will be nothing to suggest.
 
 ## autocompleteEnabled : boolean
 #### Default value: `true`
@@ -50,7 +52,7 @@ Sets case sensitivity for built-in autocomplete.
 
 ## handleCompletion : func
 #### Default value: `({value, currentSuggestion, setSuggestion, onChangeEvent}) => void`
-Custom handler for external autosuggestion - allows you to set any suggestion based on current input and current suggestion
+Custom handler for external autosuggestion - allows you to set any suggestion based on current input and current suggestion. The handler is only called when cursor is at the end of the current text.
 
 ## completionShortcut : Set of strings
 #### Default value: `Set(['Tab'])`
