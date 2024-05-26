@@ -52,6 +52,19 @@ Sets case sensitivity for built-in autocomplete.
 #### Default value: `({value, currentSuggestion, setSuggestion, onChangeEvent}) => void`
 Custom handler for external autosuggestion - allows you to set any suggestion based on current input and current suggestion
 
+## completionShortcut : Set of strings
+#### Default value: `Set(['Tab'])`
+Set of keys that can be pressed to set current suggestion, use modifier keys with (Shift, Ctrl, Alt, Meta) +
+```js
+Set(['Tab']) // pressing Tab will set current suggestion
+Set(['Shift+Tab']) // pressing Shift and Tab will set current suggestion
+Set(['Tab', 'Shift+Tab']) // pressing Shift and Tab or Tab will set current suggestion
+```
+
+## completionOnClick : boolean
+#### Default value: `false`
+Allow completion on click as well, by default only touch devices with tap can set current suggestion
+
 ## classNames : object
 #### Default value: `{wrapper: undefined, area: undefined, suggestion: undefined}`
 You can set class names for all three components - wrapper, textarea and suggestion overlay

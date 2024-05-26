@@ -1,14 +1,13 @@
 import AutocompleteArea from './react-copilot-autocomplete';
 function App() {
   return (
-    <>
-      <AutocompleteArea caseSensitive dictionary={['Berlin', 'London', 'New York', 'Hong Kong']}/>
-      <AutocompleteArea handleCompletion={({value, setSuggestion}) => {
-        if (value === 'Could we mee') {
-          setSuggestion('t in New York? // This can be your AI powered suggestion');
-        }
-    }}/>
-    </>
+    <div style={{width: '400px', margin: '0 auto'}}>
+      <div>
+        <h1>Autocomplete Area</h1>
+        <p>Type Berlin, London, Paris, Madrid, Budapest to see suggestions</p>
+        <AutocompleteArea  dictionary={['Berlin', 'London', 'Paris', 'Madrid', 'Budapest']}/>        
+      </div>
+    </div>
   );
 }
 

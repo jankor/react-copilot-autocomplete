@@ -4,13 +4,17 @@ import dts from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    outDir: './public'
+  },
   plugins: [
     react(),
-    dts({
-      insertTypesEntry: true,
-      rollupTypes: true,
-    }),
+    //dts({
+    //  insertTypesEntry: true,
+    //  rollupTypes: true,
+    //}),
   ],
+  /*
   build: {
     lib: {
       entry: './src/AutocompleteArea.tsx',
@@ -25,5 +29,5 @@ export default defineConfig({
         },
       },
     },
-  },
+  },*/
 })

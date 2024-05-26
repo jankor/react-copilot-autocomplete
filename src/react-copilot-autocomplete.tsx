@@ -20,6 +20,8 @@ interface componentProps extends React.HTMLAttributes<HTMLElement> {
   dictionary?: Array<string>;
   caseSensitive?: boolean;
   handleCompletion?: (completionParams: completionParams) => void;
+  completionShortcut?: Set<string>;
+  completionOnClick?: boolean;
   classNames?: {
     wrapper?: string;
     area?: string;
@@ -41,17 +43,15 @@ type component = React.ForwardRefRenderFunction<
   componentProps
 >;
 
-enum KeyEnum {
-  TAB = "Tab",
-}
-
 /**
  * JSX Component for displaying textarea with copilot like word autocomplete
  * @param {object} props
  * @param {string[]} props.dictionary array of strings with words to be used for autocomplete
  * @param {boolean} props.autocompleteEnabled enables/disables autocomplete, true by default
- * @param {function ({object}) void} props.handleCompletion function to handle custom completion
+ * @param {function ({object})} props.handleCompletion function to handle custom completion
  * @param {boolean} props.caseSensitive case sensitivity for the built-in autocomplete, false by default
+ * @param {boolean} props.completionOnClick disable to only complete on touch devices, false by default
+ * @param {Set<string>} props.completionShortcut Set with keys to complete the suggestion
  * @param {object} props.classNames object with keys: wrapper, area, suggestion for custom class names
  * @param {object} props.styles object with keys: wrapper, area, suggestion for custom react inline styles
  * @returns
@@ -66,12 +66,14 @@ const AutocompleteTextarea: component = (
     onMouseDown,
     handleCompletion,
     caseSensitive = false,
+    completionShortcut = new Set(['Tab']),
+    completionOnClick = false,
     ...rest },
   ref,
 ) => {
   const [suggestion, setSuggestion] = useState("");
   const inputRef = useRef<AutocompleteTextareaRef>(null); 
-  const suggestionRef = useRef<HTMLDivElement>(null);;  
+  const suggestionRef = useRef<HTMLDivElement>(null); 
 
   useImperativeHandle(ref, () => {
     inputRef.current!.clearSuggestion = () => {
@@ -82,9 +84,11 @@ const AutocompleteTextarea: component = (
 
   const lastSuggestedWord = useRef("");
   const wordIndex = useMemo(
-    () => new Trie(dictionary, { caseSensitive }),
-    [dictionary],
-  );
+    () => handleCompletion ? {} : new Trie(dictionary, { caseSensitive }),
+    [dictionary, caseSensitive, handleCompletion],
+  ) as Trie;
+
+  const touchDevice = useMemo(() => window.matchMedia("(pointer: coarse)").matches, [window]);
 
   const getLatestWord = useCallback((text: string) => {
     return text.slice(text.lastIndexOf(" ") + 1);
@@ -97,26 +101,23 @@ const AutocompleteTextarea: component = (
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (!autocompleteEnabled) return;
-    if (Object.values(KeyEnum).includes(e.key as KeyEnum)) {
+    const modifier = `${e.altKey ? 'Alt+' : ''}${e.ctrlKey ? 'Ctrl+' : ''}${e.metaKey ? 'Meta+' : ''}${e.shiftKey ? 'Shift+' : ''}`
+    if (completionShortcut.has(`${modifier}${e.key}`)) {
       e.preventDefault();
-    }
-
-    switch (e.key) {
-      case KeyEnum.TAB:
-        if (!suggestion) return;
+      if (!suggestion) return;
 
         if (inputRef.current) {
           inputRef.current.value = suggestion;
         }
         lastSuggestedWord.current = "";
         setSuggestion(suggestion);
-        break;
-    }
+    }    
   };
 
   const onAreaClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
     onMouseDown && onMouseDown(e);
     //e.nativeEvent.sourceCapabilities.firesTouchEvents // true for touch not in safari
+    if (!touchDevice && !completionOnClick) return;
     if (!autocompleteEnabled) return;
     if (!suggestion) return;
     if (inputRef.current) {
@@ -132,24 +133,25 @@ const AutocompleteTextarea: component = (
 
   const onUpdate = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const currentText = e.target.value;
+    const startPosition =  e.target.selectionStart;
+    const endPosition =  e.target.selectionEnd
+    const currentWord = getLatestWord(currentText);
 
     onChange && onChange(e);
     if (handleCompletion) {
       setSuggestion(currentText);
-      handleCompletion({
-        value: e.target.value,
-        currentSuggestion: suggestion,
-        setSuggestion: (value) => setSuggestion(currentText + value),
-        onChangeEvent: e,
-      });
+      if (startPosition !== endPosition || endPosition !== currentText.length) {
+        handleCompletion({
+          value: e.target.value,
+          currentSuggestion: suggestion,
+          setSuggestion: (value) => setSuggestion(currentText + value),
+          onChangeEvent: e,
+        });
+      }
       return;
     }
 
     if (!autocompleteEnabled) return;
-
-    const startPosition =  e.target.selectionStart;
-    const endPosition =  e.target.selectionEnd
-    const currentWord = getLatestWord(currentText);
 
     if (inputRef.current && suggestionRef.current) {
       suggestionRef.current.scrollTop = inputRef.current.scrollTop;

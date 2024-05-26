@@ -1,6 +1,6 @@
 {
   "name": "react-copilot-autocomplete",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "license": "MIT",
   "type": "module",
   "types": "./dist/react-copilot-autocomplete.d.ts",
@@ -19,6 +19,7 @@
     "dev": "vite",
     "tsc": "tsc",
     "build": "tsc --project tsconfig.build.json --outDir dist --jsx react-jsx",
+    "build-preview": "vite build -m 'production'",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
