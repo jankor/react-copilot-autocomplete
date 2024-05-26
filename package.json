@@ -1,14 +1,20 @@
 {
   "name": "react-copilot-autocomplete",
-  "version": "0.0.5",
+  "version": "0.0.10",
   "license": "MIT",
   "type": "module",
-  "types": "./dist/AutocompleteArea.d.ts",
+  "types": "./dist/react-copilot-autocomplete.d.ts",
+  "module": "./dist/react-copilot-autocomplete.js",
   "exports": {
     ".": {
-      "import": "./dist/AutocompleteArea.js"      
+      "import": "./dist/react-copilot-autocomplete.js"      
     }
-  },  
+  }, 
+  "files":  [
+    "dist/react-copilot-autocomplete.js",
+    "dist/react-copilot-autocomplete.d.ts",
+    "dist/index.js"
+  ],
   "scripts": {
     "dev": "vite",
     "tsc": "tsc",
@@ -26,6 +32,7 @@
     "eslint": "^8.53.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
+    "trie-typed": "^1.51.9",
     "typescript": "^5.2.2",
     "vite": "^5.0.0",
     "vite-plugin-dts": "^3.9.1"
@@ -41,6 +48,9 @@
       "optional": true
     },
     "@types/react-dom": {
+      "optional": true
+    },
+    "trie-typed": {
       "optional": true
     }
   }

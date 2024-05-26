@@ -1,4 +1,4 @@
-import AutocompleteArea from './AutocompleteArea';
+import AutocompleteArea from './react-copilot-autocomplete';
 function App() {
   return (
     <>

@@ -12,6 +12,12 @@ You can pass a dictionary list and word autocompletion will work out of the box 
 <AutocompleteTextarea words={['New York', 'London', 'Berlin', 'Hong Kong']}/>
 ```
 
+Please install trie peer dependency if you are using the built in autocomplete:
+```bash
+npm i trie-typed --save
+```
+
+
 You can also pass your own suggestion function and ignore the built-in word completion. Keep in mind that this way you will have to handle:
 - Debouncing and throttling
 - Api race conditions

@@ -16,6 +16,6 @@
     "outDir": "dist",
     "rootDir": "src"
   },
-  "include": ["src/AutocompleteArea.tsx"],
+  "include": ["src/react-copilot-autocomplete.tsx"],
   "exclude": ["src/App.tsx", "src/main.tsx"]
 }
