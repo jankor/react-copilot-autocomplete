@@ -24,5 +24,5 @@ interface componentProps extends React.HTMLAttributes<HTMLElement> {
 export interface AutocompleteTextareaRef extends HTMLTextAreaElement {
     clearSuggestion: () => void;
 }
-declare const RefAutocompleteTextarea: import('react').ForwardRefExoticComponent<componentProps & import('react').RefAttributes<AutocompleteTextareaRef>>;
+declare const RefAutocompleteTextarea: import("react").ForwardRefExoticComponent<componentProps & import("react").RefAttributes<AutocompleteTextareaRef>>;
 export default RefAutocompleteTextarea;

@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
     dts({
       insertTypesEntry: true,
+      rollupTypes: true,
     }),
   ],
   build: {
@@ -15,5 +16,14 @@ export default defineConfig({
       entry: './src/AutocompleteArea.tsx',
       formats: ['es']
       },
+    rollupOptions: {      
+      external: ['react', 'react-dom'],
+      output: {        
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',          
+        },
+      },
+    },
   },
 })

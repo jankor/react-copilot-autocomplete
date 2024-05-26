@@ -1,31 +1,22 @@
 {
   "name": "react-copilot-autocomplete",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "license": "MIT",
   "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/react-copilot-autocomplete.umd.cjs",
-  "module": "./dist/react-copilot-autocomplete.js",
+  "types": "./dist/AutocompleteArea.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/react-copilot-autocomplete.js",
-      "require": "./dist/react-copilot-autocomplete.umd.cjs"
+      "import": "./dist/AutocompleteArea.js"      
     }
-  },
+  },  
   "scripts": {
     "dev": "vite",
     "tsc": "tsc",
-    "build": "vite build -m 'production'",
+    "build": "tsc --project tsconfig.build.json --outDir dist --jsx react-jsx",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "trie-typed": "^1.51.9"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
@@ -38,5 +29,19 @@
     "typescript": "^5.2.2",
     "vite": "^5.0.0",
     "vite-plugin-dts": "^3.9.1"
+  },
+  "peerDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "react": "^17.0 || ^18.0",
+    "react-dom": "^17.0 || ^18.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
   }
 }
