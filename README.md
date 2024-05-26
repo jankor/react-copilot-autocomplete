@@ -1,19 +1,21 @@
 # React copilot autocomplete
 
 This is a copilot like autosuggest in react based on textarea (not on content editable).
-Use Tab or click/tap the textarea to autocomplete current suggestion.
+All props are passed directly to the textarea (including ref) so this component should be compatible with any
+form handling.
+Use Tab or click/tap the textarea to autocomplete the current suggestion.
 
-You can pass a dictionary list and word autocomplete will work out of the box based on Trie index look up:
+You can pass a dictionary list and word autocompletion will work out of the box based on Trie index lookup:
 
 [![react-copilot-autocomplete](https://github.com/jankor/react-copilot-autocomplete/raw/main/src/assets/word-autocomplete.gif)](https://github.com/jankor/react-copilot-autocomplete)
 ```js
 <AutocompleteTextarea words={['New York', 'London', 'Berlin', 'Hong Kong']}/>
 ```
 
-You can also pass your own suggestion funtion and ignore the build in word autocomplete. Keep in mind this way you will have to hande:
-- Debouncing and Throttling
+You can also pass your own suggestion function and ignore the built-in word completion. Keep in mind that this way you will have to handle:
+- Debouncing and throttling
 - Api race conditions
-- Correctly slice/discard currentSuggestion as user is typing
+- Correctly slice/discard currentSuggestion as user types
 
 [![react-copilot-autocomplete](https://github.com/jankor/react-copilot-autocomplete/raw/main/src/assets/custom-autocomplete.gif)](https://github.com/jankor/react-copilot-autocomplete)
 ```js
@@ -34,11 +36,11 @@ Disables autocompletion
 
 ## dictionary : array of strings
 #### Default value: `[]`
-Dictionary of words used for built in autocomplete, won't be used if custom handleCompletion is passed
+Dictionary of words used for built-in autocomplete, won't be used if custom handleCompletion is passed
 
 ## caseSensitive : boolean
 #### Default value: `false`
-Sets case sensitivity for built in autocomplete.
+Sets case sensitivity for built-in autocomplete.
 
 ## handleCompletion : func
 #### Default value: `({value, currentSuggestion, setSuggestion, onChangeEvent}) => void`
@@ -46,15 +48,15 @@ Custom handler for external autosuggestion - allows you to set any suggestion ba
 
 ## classNames : object
 #### Default value: `{wrapper: undefined, area: undefined, suggestion: undefined}`
-You can set class names for all main three components - wrapper, textarea and suggestion overlay
+You can set class names for all three components - wrapper, textarea and suggestion overlay
 
 ## styles : object
 #### Default value: `{wrapper: undefined, area: undefined, suggestion: undefined}`
-You can set react inline styles for all main three components - wrapper, textarea and suggestion overlay
-Bare in mind no to override important functional styles - eg:
-- form background color is transparent, the actuall background color is coming from suggestion overlay
-- make sure to keep suggestion z index below the form
-- make sure the form and suggestion has the same overlapping size
+You can set react inline styles for all three components - wrapper, textarea and suggestion overlay
+Be careful not to override important functional styles, such as
+- the form background color is transparent, the actual background color comes from the suggestion overlay
+- make sure the suggestion z index is below the form
+- make sure that the form and the suggestion have the same overlap size
 ```js
 const suggestionStyle = {
     ...areaStyle,

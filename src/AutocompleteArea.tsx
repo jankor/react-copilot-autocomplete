@@ -48,8 +48,12 @@ enum KeyEnum {
 /**
  * JSX Component for displaying textarea with copilot like word autocomplete
  * @param {object} props
- * @param {array[string]} props.dictionary array of strings with words to be used for autocomplete
+ * @param {string[]} props.dictionary array of strings with words to be used for autocomplete
  * @param {boolean} props.autocompleteEnabled enables/disables autocomplete, true by default
+ * @param {function ({object}) void} props.handleCompletion function to handle custom completion
+ * @param {boolean} props.caseSensitive case sensitivity for the built-in autocomplete, false by default
+ * @param {object} props.classNames object with keys: wrapper, area, suggestion for custom class names
+ * @param {object} props.styles object with keys: wrapper, area, suggestion for custom react inline styles
  * @returns
  */
 const AutocompleteTextarea: component = (
