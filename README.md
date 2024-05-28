@@ -44,11 +44,11 @@ Disables autocompletion
 
 ## dictionary : array of strings
 #### Default value: `[]`
-Dictionary of words used for built-in autocomplete, won't be used if custom handleCompletion is passed
+Dictionary of words used for the built-in autocomplete, won't be used if custom handleCompletion is passed
 
 ## caseSensitive : boolean
 #### Default value: `false`
-Sets case sensitivity for built-in autocomplete.
+Sets case sensitivity for the built-in autocomplete.
 
 ## handleCompletion : func
 #### Default value: `({value, currentSuggestion, setSuggestion, onChangeEvent}) => void`
@@ -58,14 +58,14 @@ Custom handler for external autosuggestion - allows you to set any suggestion ba
 #### Default value: `Set(['Tab'])`
 Set of keys that can be pressed to set current suggestion, use modifier keys with (Shift, Ctrl, Alt, Meta) +
 ```js
-Set(['Tab']) // pressing Tab will set current suggestion
-Set(['Shift+Tab']) // pressing Shift and Tab will set current suggestion
-Set(['Tab', 'Shift+Tab']) // pressing Shift and Tab or Tab will set current suggestion
+Set(['Tab']) // pressing Tab will set the current suggestion
+Set(['Shift+Tab']) // pressing Shift and Tab will set the current suggestion
+Set(['Tab', 'Shift+Tab']) // pressing Shift and Tab or Tab will set the current suggestion
 ```
 
 ## completionOnClick : boolean
 #### Default value: `false`
-Allow completion on click as well, by default only touch devices with tap can set current suggestion
+Allows completion on click as well, by default only touch devices with tap can set current suggestion
 
 ## classNames : object
 #### Default value: `{wrapper: undefined, area: undefined, suggestion: undefined}`
