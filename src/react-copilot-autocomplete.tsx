@@ -5,6 +5,7 @@ import {
   useMemo,
   useImperativeHandle,
   useCallback,
+  useEffect,
 } from "react";
 import { Trie } from "trie-typed";
 
@@ -12,8 +13,10 @@ type completionParams = {
   value: string;
   currentSuggestion: string;
   setSuggestion: (suggestion: string) => void;
-  onChangeEvent: React.ChangeEvent<HTMLTextAreaElement>;
+  onChangeEvent: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>;
 };
+
+type possibleInputComponents = 'input' | 'textarea';
 
 interface componentProps extends React.HTMLAttributes<HTMLElement> {
   autocompleteEnabled?: boolean;
@@ -22,14 +25,14 @@ interface componentProps extends React.HTMLAttributes<HTMLElement> {
   handleCompletion?: (completionParams: completionParams) => void;
   completionShortcut?: Set<string>;
   completionOnClick?: boolean;
+  as?: possibleInputComponents,
+  asChild?: boolean,
   classNames?: {
     wrapper?: string;
-    area?: string;
     suggestion?: string;
   };
   styles?: {
-    wrapper?: React.StyleHTMLAttributes<HTMLDivElement>;
-    area?: React.StyleHTMLAttributes<HTMLTextAreaElement>;
+    wrapper?: React.StyleHTMLAttributes<HTMLDivElement>;    
     suggestion?: React.StyleHTMLAttributes<HTMLDivElement>;
   };
 };
@@ -38,8 +41,12 @@ export interface AutocompleteTextareaRef extends HTMLTextAreaElement {
   clearSuggestion: () => void;
 }
 
+export interface AutocompleteInputRef extends HTMLInputElement {
+  clearSuggestion: () => void;
+}
+
 type component = React.ForwardRefRenderFunction<
-  AutocompleteTextareaRef,
+  AutocompleteTextareaRef | AutocompleteInputRef,
   componentProps
 >;
 
@@ -59,6 +66,8 @@ type component = React.ForwardRefRenderFunction<
 const AutocompleteTextarea: component = (
   {
     styles,
+    style,
+    className,
     classNames,
     dictionary = [],
     autocompleteEnabled = true,
@@ -68,13 +77,17 @@ const AutocompleteTextarea: component = (
     caseSensitive = false,
     completionShortcut = new Set(['Tab']),
     completionOnClick = false,
+    as: Tag = 'textarea' as unknown as React.ElementType,
+    asChild = false,
     ...rest },
   ref,
 ) => {
   const [suggestion, setSuggestion] = useState("");
-  const inputRef = useRef<AutocompleteTextareaRef>(null); 
+  const [suggestionStyle, setSuggestionStyle] = useState({});
+  const inputRef = useRef<AutocompleteTextareaRef | AutocompleteInputRef| null>(null); 
   const suggestionRef = useRef<HTMLDivElement>(null); 
-
+  const backgroundColor = useRef<string | null>(null); 
+  
   useImperativeHandle(ref, () => {
     inputRef.current!.clearSuggestion = () => {
       setSuggestion(inputRef?.current?.value || "");
@@ -89,17 +102,58 @@ const AutocompleteTextarea: component = (
   ) as Trie;
 
   const touchDevice = useMemo(() => window.matchMedia("(pointer: coarse)").matches, [window]);
+  const isInput = useMemo(() => inputRef.current?.nodeName === 'INPUT', [inputRef]);
 
   const getLatestWord = useCallback((text: string) => {
     return text.slice(text.lastIndexOf(" ") + 1);
   }, []);
 
-  const handleScrollInput = (scroll: React.UIEvent<HTMLTextAreaElement>) => {
-    if (!suggestionRef.current) return;  
+  const syncOverlayStyle = useCallback(() => {    
+    const inputStyle = inputRef.current ? getComputedStyle(inputRef.current) : null;    
+    if (inputStyle) {
+      if (inputStyle.backgroundColor !== 'rgba(0, 0, 0, 0)' && inputRef.current) {
+        backgroundColor.current = inputStyle.backgroundColor;
+        inputRef.current.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+      }      
+      setSuggestionStyle({
+        ...defaultSuggestionStyle,
+        width: inputStyle.width,
+        height: inputStyle.height,
+        boxSizing: inputStyle.boxSizing,
+        marginLeft: inputStyle.marginLeft,
+        marginRight: inputStyle.marginRight,
+        marginTop: inputStyle.marginTop,
+        marginBottom: inputStyle.marginBottom,
+        paddingLeft: inputStyle.paddingLeft,
+        paddingRight: inputStyle.paddingRight,
+        paddingTop: inputStyle.paddingTop,
+        paddingBottom: inputStyle.paddingBottom,
+        fontFamily: inputStyle.fontFamily,
+        fontSize: inputStyle.fontSize,
+        borderLeftWidth: inputStyle.borderLeftWidth,
+        borderRightWidth: inputStyle.borderRightWidth,
+        borderTopWidth: inputStyle.borderTopWidth,
+        borderBottomWidth: inputStyle.borderBottomWidth,
+        borderStyle: inputStyle.borderStyle,
+        backgroundColor: backgroundColor.current || 'white',
+        lineHeight: isInput ? inputStyle.height : inputStyle.lineHeight,
+      });
+    }
+  }, [inputRef, isInput]);
+
+  const handleScrollInput = (scroll: React.UIEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    if (!suggestionRef.current) return;
+    if (isInput && scroll.currentTarget.scrollLeft !== 0) {
+      if (suggestion !== '') {
+        setSuggestion('');
+        lastSuggestedWord.current = "";
+      }
+    }
     suggestionRef.current.scrollTop = scroll.currentTarget.scrollTop;
+    suggestionRef.current.scrollLeft = scroll.currentTarget.scrollLeft;    
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     if (!autocompleteEnabled) return;
     const modifier = `${e.altKey ? 'Alt+' : ''}${e.ctrlKey ? 'Ctrl+' : ''}${e.metaKey ? 'Meta+' : ''}${e.shiftKey ? 'Shift+' : ''}`
     if (completionShortcut.has(`${modifier}${e.key}`)) {
@@ -114,7 +168,7 @@ const AutocompleteTextarea: component = (
     }    
   };
 
-  const onAreaClick = (e: React.MouseEvent<HTMLTextAreaElement>) => {
+  const onAreaClick = (e: React.MouseEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     onMouseDown && onMouseDown(e);
     //e.nativeEvent.sourceCapabilities.firesTouchEvents // true for touch not in safari
     if (!touchDevice && !completionOnClick) return;
@@ -131,13 +185,24 @@ const AutocompleteTextarea: component = (
     } 
   }
 
-  const onUpdate = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const onUpdate = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const currentText = e.target.value;
     const startPosition =  e.target.selectionStart;
     const endPosition =  e.target.selectionEnd
     const currentWord = getLatestWord(currentText);
+    const scrollLeft = e.target.scrollLeft;
+    const isTargetInput = e.target.nodeName === 'INPUT';
 
     onChange && onChange(e);
+
+    if (isTargetInput && scrollLeft !== 0) {
+      if (suggestion !== '') {
+        setSuggestion('');
+        lastSuggestedWord.current = "";
+      }
+      return;
+    }
+
     if (handleCompletion) {
       setSuggestion(currentText);
       if (startPosition !== endPosition || endPosition !== currentText.length) {
@@ -155,7 +220,9 @@ const AutocompleteTextarea: component = (
 
     if (inputRef.current && suggestionRef.current) {
       suggestionRef.current.scrollTop = inputRef.current.scrollTop;
+      suggestionRef.current.scrollLeft = inputRef.current.scrollLeft;
     }
+
     setSuggestion(currentText);
     // if the current word is less than 2 characters, don't suggest anything
     // if the user has active selection don't suggest anything
@@ -206,45 +273,37 @@ const AutocompleteTextarea: component = (
     ...styles?.wrapper,
   };
 
-  const areaStyle = {
-    fontFamily: 'inherit',
-    width: '100%',
-    height: '300px',
-    boxSizing: 'border-box' as 'border-box',
-    backgroundColor: 'transparent',
-    border: '1px solid #d9d9d9',
-    fontSize: '15px',
-    resize: 'none' as 'none',
-    padding: '10px',
-    zIndex: 1,
-    ...styles?.area,
-  };
-
-  const suggestionStyle = {
-    ...areaStyle,
+  const defaultSuggestionStyle = {
     position: 'absolute' as 'absolute',
     overflowY: 'scroll' as 'scroll',
-    backgroundColor: 'white',
-    display: 'block !important',
+    overflowX: 'scroll' as 'scroll',    
+    display: 'block !important',    
     top: 0,
-    color: '#c9c9c9',
+    opacity: 0.5,
+    //whiteSpace: 'nowrap', // check if this is required for input
     borderColor: 'transparent',
     zIndex: -1,
-    ...styles?.suggestion,
+    
   };
-
+  useEffect(() => {
+    syncOverlayStyle();
+  }, [inputRef.current])
+//console.log('ref', inputRef.current ? getComputedStyle(inputRef.current) : 'no ref')
+  
   return (
-    <div style={wrapperStyle} className={classNames?.wrapper}>
-      <textarea
-        style={areaStyle}
-        className={classNames?.area}
-        ref={inputRef}
-        onChange={onUpdate}
-        onKeyDown={handleKeyDown}
-        onMouseDown={onAreaClick}
-        onScroll={handleScrollInput}
-        {...rest}
-      />
+    <div style={wrapperStyle} className={classNames?.wrapper}>{
+      asChild ? (rest.children) : (
+        <Tag        
+          style={style}
+          className={className}
+          ref={inputRef}
+          onChange={onUpdate}
+          onKeyDown={handleKeyDown}
+          onMouseDown={onAreaClick}
+          onScroll={handleScrollInput}
+          {...rest}
+        />)
+      }
       {autocompleteEnabled ? (
         <div ref={suggestionRef} style={suggestionStyle} className={classNames?.suggestion}>{suggestion}</div>
       ) : (
@@ -255,7 +314,7 @@ const AutocompleteTextarea: component = (
 };
 
 const RefAutocompleteTextarea = forwardRef<
-  AutocompleteTextareaRef,
+  AutocompleteTextareaRef | AutocompleteInputRef,
   componentProps
 >(AutocompleteTextarea);
 export default RefAutocompleteTextarea;
