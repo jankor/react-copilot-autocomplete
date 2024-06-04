@@ -1,17 +1,17 @@
 {
   "name": "react-copilot-autocomplete",
   "description": "Copilot inspired autocomplete textarea for React",
-  "version": "0.0.12",
+  "version": "0.1.0",
   "license": "MIT",
   "type": "module",
   "types": "./dist/react-copilot-autocomplete.d.ts",
   "module": "./dist/react-copilot-autocomplete.js",
   "exports": {
     ".": {
-      "import": "./dist/react-copilot-autocomplete.js"      
+      "import": "./dist/react-copilot-autocomplete.js"
     }
-  }, 
-  "files":  [
+  },
+  "files": [
     "dist/react-copilot-autocomplete.js",
     "dist/react-copilot-autocomplete.d.ts",
     "dist/index.js"
@@ -24,10 +24,12 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@radix-ui/themes": "^3.0.5",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react": "^4.2.0",
