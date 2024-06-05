@@ -14,9 +14,9 @@ function App() {
           <h1>Autocomplete Area</h1>
           <p>Type Berlin, London, Paris, Madrid, Budapest to see suggestions <span style={{color: '#3f3f3f'}}>(use Tab on keyboard or tap the textarea on mobile to autocomplete)</span></p>
           <p>Input:</p>
-          <AutocompleteArea style={{padding: '3px', margin: 0, width: '100%'}} dictionary={['Berlin', 'London', 'Paris', 'Madrid', 'Budapest']} />
+          <AutocompleteArea style={{padding: '3px', margin: 0, width: '100%', border: '1px solid grey'}} dictionary={['Berlin', 'London', 'Paris', 'Madrid', 'Budapest']} />
           <p>Textarea:</p>
-          <AutocompleteArea as='textarea' style={{height: '50px', margin: 0, width: '100%'}} dictionary={['Berlin', 'London', 'Paris', 'Madrid', 'Budapest']} />  
+          <AutocompleteArea as='textarea' style={{padding: '5px', height: '50px', margin: 0, width: '100%'}} dictionary={['Berlin', 'London', 'Paris', 'Madrid', 'Budapest']} />  
           <p>Radix input asChild:</p>
             <AutocompleteArea asChild styles={{suggestion: {top: '1px', left: '1px', height: '29.500px', opacity: 0.8}}} dictionary={['Berlin', 'London', 'Paris', 'Madrid', 'Budapest']}>
               <EnhancedTextField />
