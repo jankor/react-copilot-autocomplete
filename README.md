@@ -107,5 +107,3 @@ Be careful not to override important functional styles, such as
 - make sure the suggestion z index is below the form
 - make sure that the form and the suggestion have the same overlap size
 
-```
-
