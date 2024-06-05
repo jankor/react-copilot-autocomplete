@@ -1,7 +1,7 @@
 # React copilot autocomplete
 
-This is a copilot like autosuggest in react based on textarea (not on content editable).
-All props are passed directly to the textarea (including ref) so this component should be compatible with any
+This is a copilot like autosuggest in react based on native html input or textarea (not on content editable).
+All props are passed directly to the elements (including ref, className and style) so this component should be compatible with any
 form handling.
 Use Tab or click/tap the textarea to autocomplete the current suggestion.
 
@@ -10,13 +10,13 @@ Live preview available at [https://jankor.github.io/react-copilot-autocomplete/]
 You can pass a dictionary list and word autocompletion will work out of the box based on Trie index lookup:
 
 [![react-copilot-autocomplete](https://github.com/jankor/react-copilot-autocomplete/raw/main/src/assets/word-autocomplete.gif)](https://github.com/jankor/react-copilot-autocomplete)
-```js
-<AutocompleteTextarea words={['New York', 'London', 'Berlin', 'Hong Kong']}/>
-```
 
 Please install trie peer dependency if you are using the built in autocomplete:
 ```bash
 npm i trie-typed --save
+```
+```js
+<Autocomplete as="textarea" words={['New York', 'London', 'Berlin', 'Hong Kong']}/>
 ```
 
 
@@ -27,7 +27,9 @@ You can also pass your own suggestion function and ignore the built-in word comp
 
 [![react-copilot-autocomplete](https://github.com/jankor/react-copilot-autocomplete/raw/main/src/assets/custom-autocomplete.gif)](https://github.com/jankor/react-copilot-autocomplete)
 ```js
-<AutocompleteTextarea handleCompletion={async ({value, currentSuggestion, setSuggestion, onChangeEvent}) => {
+<Autocomplete 
+  as="textarea"
+  handleCompletion={async ({value, currentSuggestion, setSuggestion, onChangeEvent}) => {
   const suggestion = await getAIPoweredSuggestion(value);
   if (suggestion !== currentSuggestion) {
     setSuggestion(suggestion);
@@ -35,8 +37,35 @@ You can also pass your own suggestion function and ignore the built-in word comp
 }}/>
 ```
 
+You can also pass your input component that will be enhanced with autocomplete. For example an input from UI library:
+
+```js
+import { TextField } from '@radix-ui/themes';
+
+const EnhancedTextField = forwardRef<AutocompleteInputRef>((props, fwdRef) => 
+  <TextField.Root size="2" {...props} ref={fwdRef} placeholder="Get your city" />
+);
+
+<Autocomplete
+  asChild
+  words={['New York', 'London', 'Berlin', 'Hong Kong']}
+  styles={{suggestion: {top: '1px', left: '1px', height: '29.500px', opacity: 0.8}}}>
+  <EnhancedTextField />
+</Autocomplete>
+```
+
 # Configurable Props
 *Note*: All props are optional but if you don't pass either dictionary or handleCompletion there will be nothing to suggest.
+
+## as : string - input | textarea
+#### Default value: `input`
+Select the html element to render: input or textarea are supported.
+Cannot be used in combination with asChild.
+
+## asChild : boolean
+#### Default value: `false`
+Change the default rendered element for the one passed as a child, merging their props and behavior. Use this when you want to pass custom input or textarea (eg one from a UI library). Keep in mind to spread props and forward ref of the custom element. You can learn more about the concept from radix documentation:
+https://www.radix-ui.com/primitives/docs/guides/composition
 
 ## autocompleteEnabled : boolean
 #### Default value: `true`
@@ -68,28 +97,15 @@ Set(['Tab', 'Shift+Tab']) // pressing Shift and Tab or Tab will set the current 
 Allows completion on click as well, by default only touch devices with tap can set current suggestion
 
 ## classNames : object
-#### Default value: `{wrapper: undefined, area: undefined, suggestion: undefined}`
-You can set class names for all three components - wrapper, textarea and suggestion overlay
+#### Default value: `{wrapper: undefined, suggestion: undefined}`
+You can set class names for the support elements - wrapper and suggestion overlay
 
 ## styles : object
-#### Default value: `{wrapper: undefined, area: undefined, suggestion: undefined}`
-You can set react inline styles for all three components - wrapper, textarea and suggestion overlay
+#### Default value: `{wrapper: undefined, suggestion: undefined}`
+You can set react inline styles for the support elements - wrapper and suggestion overlay
 Be careful not to override important functional styles, such as
-- the form background color is transparent, the actual background color comes from the suggestion overlay
 - make sure the suggestion z index is below the form
 - make sure that the form and the suggestion have the same overlap size
-```js
-const suggestionStyle = {
-    ...areaStyle,
-    position: 'absolute',
-    overflowY: 'scroll',
-    backgroundColor: 'white',
-    display: 'block !important',
-    top: 0,
-    color: '#c9c9c9',
-    borderColor: 'transparent',
-    zIndex: -1,
-    ...styles?.suggestion,
-  };
+
 ```
 
