@@ -49,8 +49,10 @@ export interface AutocompleteInputRef extends HTMLInputElement {
   setSuggestion: (suggestion: string) => void;
 }
 
+export type AutocompleteRef = AutocompleteTextareaRef | AutocompleteInputRef;
+
 type component = React.ForwardRefRenderFunction<
-  AutocompleteTextareaRef | AutocompleteInputRef,
+  AutocompleteRef,
   componentProps
 >;
 
@@ -117,7 +119,7 @@ const AutocompleteTextarea: component = (
       setSuggestion(inputRef?.current?.value || "");
     };
     inputRef.current!.setSuggestion = (suggestion: string) => {
-      setSuggestion(suggestion);
+      setSuggestion(inputRef?.current?.value + suggestion);
     };
     return inputRef.current!;
   });
@@ -132,7 +134,7 @@ const AutocompleteTextarea: component = (
   
   const getLatestWord = useCallback((text: string) => {  
     const words = text.split(/\W+/)
-    return words.length > 0 ? words[words.length - 1] : '';
+    return words[words.length - 1] || '';
   }, []);
 
   const syncOverlayStyle = useCallback(() => {        
@@ -145,7 +147,7 @@ const AutocompleteTextarea: component = (
         inputRef.current.style.overscrollBehavior = 'none';
         inputRef.current.style.verticalAlign = 'top';
       }
-      console.log(inputStyle);
+      
       setSuggestionStyle({
         ...defaultSuggestionStyle,
         width: inputStyle.width,

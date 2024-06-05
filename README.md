@@ -59,11 +59,12 @@ const EnhancedTextField = forwardRef<AutocompleteInputRef>((props, fwdRef) =>
 
 ## as : string - input | textarea
 #### Default value: `input`
-Select the html element to render: input or textarea are supported
+Select the html element to render: input or textarea are supported.
+Cannot be used in combination with asChild.
 
 ## asChild : boolean
 #### Default value: `false`
-Use this when you want to pass custom input or textarea (eg one from a UI library). Keep in mind to spread props and forward ref of the custom element. You can learn more about the concept from radix documentation:
+Change the default rendered element for the one passed as a child, merging their props and behavior. Use this when you want to pass custom input or textarea (eg one from a UI library). Keep in mind to spread props and forward ref of the custom element. You can learn more about the concept from radix documentation:
 https://www.radix-ui.com/primitives/docs/guides/composition
 
 ## autocompleteEnabled : boolean
